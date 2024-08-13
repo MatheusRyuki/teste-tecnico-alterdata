@@ -1,19 +1,54 @@
-# Processo seletivo Alterdata - Cirrus 
+# Sistema de Gerenciamento de Soluções de Erros
 
-Repositório contendo o projeto de processo seletivo da Alterdata.
+## Descrição
 
+Este projeto é um sistema de gerenciamento de soluções de erros. Ele permite o cadastro de sugestões de correção para erros, avaliação dessas sugestões e acompanhamento das avaliações.
 
+## Funcionalidades
 
-coloque todo o projeto de frontend na pasta "frontend" e o projeto de backend na pasta "backend".
+- Cadastro de sugestões de correção
+- Consulta de sugestões por código de erro
+- Cadastro de avaliações de sugestões
+- Dashboard com avaliação média total e por sugestão
+- Filtro de avaliações por período
+- Atualização em tempo real
+- Design responsivo
 
+## Tecnologias Utilizadas
 
+- Back-end: Node.js, TypeScript, Express, Mongoose, WebSocket
+- Front-end: React, Axios
+- Banco de Dados: MongoDB (MongoDB Atlas)
 
-descreva os detalhes necessários para execução do projeto aqui no README.md.
+## Instalação
 
+### Pré-requisitos
 
+- Node.js instalado
+- MongoDB Atlas já está conectado
 
-qualquer dúvida sobre os desafio pode entrar em contato comigo pelo e-mail dias.dsn.cir@alterdata.com.br.
+### Passos para Instalação
 
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/hdias2310/alterdata-cirrus-matheus-ryuki.git
 
+Instale as dependências do back-end:
+cd backend
+npm install
 
-bom desafio!
+Compile o TypeScript:
+npx tsc
+
+Inicie o servidor:
+node dist/server.js
+
+Instale as dependências do front-end:
+cd ../frontend
+npm install
+
+Inicie o front-end:
+npm start
+
+Acesse o sistema no navegador:
+http://localhost:3000
