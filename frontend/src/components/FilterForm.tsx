@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
 
 interface Evaluation {
   errorCode: string;
@@ -10,22 +10,19 @@ interface Evaluation {
 }
 
 const FilterForm: React.FC = () => {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/evaluations",
-        {
-          params: { startDate, endDate },
-        }
-      );
+      const response = await axios.get('http://localhost:3000/api/evaluations', {
+        params: { startDate, endDate }
+      });
       setEvaluations(response.data);
     } catch (error) {
-      console.error("Erro ao obter avaliações:", error);
+      console.error('Erro ao obter avaliações:', error);
     }
   };
 
@@ -55,14 +52,24 @@ const FilterForm: React.FC = () => {
       </form>
       <div>
         <h3>Resultados:</h3>
-        <ul>
-          {evaluations.map((evaluation, index) => (
-            <li key={index}>
-              {evaluation.date}: {evaluation.suggestionText} -{" "}
-              {evaluation.evaluation} (Cliente: {evaluation.clientCode})
-            </li>
-          ))}
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Código do Cliente</th>
+              <th>Avaliação</th>
+            </tr>
+          </thead>
+          <tbody>
+            {evaluations.map((evaluation, index) => (
+              <tr key={index}>
+                <td>{new Date(evaluation.date).toLocaleDateString()}</td>
+                <td>{evaluation.clientCode}</td>
+                <td>{evaluation.evaluation}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
