@@ -10,6 +10,7 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
+import { SnackbarProvider } from "notistack";
 import SuggestionForm from "./components/SuggestionForm";
 import EvaluationForm from "./components/EvaluationForm";
 import Dashboard from "./components/Dashboard";
@@ -17,7 +18,7 @@ import FilterForm from "./components/FilterForm";
 
 const App: React.FC = () => {
   return (
-    <React.Fragment>
+    <SnackbarProvider maxSnack={3}>
       <CssBaseline />
       <AppBar position="static">
         <Toolbar>
@@ -63,7 +64,7 @@ const App: React.FC = () => {
           Desenvolvido por Matheus Ryuki
         </Typography>
       </Box>
-    </React.Fragment>
+    </SnackbarProvider>
   );
 };
 

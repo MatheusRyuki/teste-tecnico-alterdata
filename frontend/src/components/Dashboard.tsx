@@ -8,6 +8,7 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 
 interface Evaluation {
   suggestion: string;
@@ -15,6 +16,7 @@ interface Evaluation {
 }
 
 const Dashboard: React.FC = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const [averageTotal, setAverageTotal] = useState<number | null>(null);
   const [averageBySuggestion, setAverageBySuggestion] = useState<Evaluation[]>(
     []
@@ -38,14 +40,15 @@ const Dashboard: React.FC = () => {
     const ws = new WebSocket("ws://localhost:3000");
     ws.onmessage = (event) => {
       const newEvaluation = JSON.parse(event.data);
-      console.log("Nova avaliação recebida:", newEvaluation);
+      console.log(newEvaluation);
+      enqueueSnackbar("Nova avaliação recebida!", { variant: "info" });
       fetchAverages(); // Atualizar as médias quando uma nova avaliação for recebida
     };
 
     return () => {
       ws.close();
     };
-  }, []);
+  }, [enqueueSnackbar]);
 
   return (
     <Container maxWidth="md">
