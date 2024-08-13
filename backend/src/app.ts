@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import suggestionRoutes from "./routes/suggestionRoutes";
+import evaluationRoutes from "./routes/evaluationRoutes";
 
 const app = express();
 
@@ -22,5 +23,6 @@ mongoose
 
 // Rotas
 app.use("/api", suggestionRoutes);
+app.use("/api", evaluationRoutes);
 
 export default app;
