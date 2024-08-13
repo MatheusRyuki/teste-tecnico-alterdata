@@ -51,4 +51,4 @@ Inicie o front-end:
 npm start
 
 Acesse o sistema no navegador:
-http://localhost:3000
+http://localhost:3001

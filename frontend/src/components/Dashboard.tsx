@@ -1,5 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Typography,
+  Container,
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 
 interface Evaluation {
   suggestion: string;
@@ -8,25 +16,29 @@ interface Evaluation {
 
 const Dashboard: React.FC = () => {
   const [averageTotal, setAverageTotal] = useState<number | null>(null);
-  const [averageBySuggestion, setAverageBySuggestion] = useState<Evaluation[]>([]);
+  const [averageBySuggestion, setAverageBySuggestion] = useState<Evaluation[]>(
+    []
+  );
 
   useEffect(() => {
     const fetchAverages = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/evaluations/average');
+        const response = await axios.get(
+          "http://localhost:3000/api/evaluations/average"
+        );
         setAverageTotal(response.data.averageTotal);
         setAverageBySuggestion(response.data.averageBySuggestion);
       } catch (error) {
-        console.error('Erro ao obter avaliações:', error);
+        console.error("Erro ao obter avaliações:", error);
       }
     };
 
     fetchAverages();
 
-    const ws = new WebSocket('ws://localhost:3000');
+    const ws = new WebSocket("ws://localhost:3000");
     ws.onmessage = (event) => {
       const newEvaluation = JSON.parse(event.data);
-      console.log('Nova avaliação recebida:', newEvaluation);
+      console.log("Nova avaliação recebida:", newEvaluation);
       fetchAverages(); // Atualizar as médias quando uma nova avaliação for recebida
     };
 
@@ -36,22 +48,33 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Dashboard de Avaliações</h2>
-      <div>
-        <h3>Avaliação Média Total: {averageTotal !== null ? `${averageTotal.toFixed(2)}%` : 'Carregando...'}</h3>
-      </div>
-      <div>
-        <h3>Avaliação Média por Sugestão:</h3>
-        <ul>
+    <Container maxWidth="md">
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h4" component="h2" gutterBottom>
+          Dashboard de Avaliações
+        </Typography>
+        <Typography variant="h6" component="h3" gutterBottom>
+          Avaliação Média Total:{" "}
+          {averageTotal !== null
+            ? `${averageTotal.toFixed(2)}%`
+            : "Carregando..."}
+        </Typography>
+        <Typography variant="h6" component="h3" gutterBottom>
+          Avaliação Média por Sugestão:
+        </Typography>
+        <List>
           {averageBySuggestion.map((evaluation, index) => (
-            <li key={index}>
-              {evaluation.suggestion}: {evaluation.average.toFixed(2)}%
-            </li>
+            <ListItem key={index}>
+              <ListItemText
+                primary={`${
+                  evaluation.suggestion
+                }: ${evaluation.average.toFixed(2)}%`}
+              />
+            </ListItem>
           ))}
-        </ul>
-      </div>
-    </div>
+        </List>
+      </Box>
+    </Container>
   );
 };
 
