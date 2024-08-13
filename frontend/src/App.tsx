@@ -1,6 +1,7 @@
-import React from 'react';
-import SuggestionForm from './components/SuggestionForm';
-import Dashboard from './components/Dashboard';
+import React from "react";
+import SuggestionForm from "./components/SuggestionForm";
+import Dashboard from "./components/Dashboard";
+import FilterForm from "./components/FilterForm";
 
 const App: React.FC = () => {
   return (
@@ -8,6 +9,7 @@ const App: React.FC = () => {
       <h1>Sistema de Gerenciamento de Soluções de Erros</h1>
       <SuggestionForm />
       <Dashboard />
+      <FilterForm />
     </div>
   );
 };

@@ -59,4 +59,26 @@ router.get('/evaluations/average', async (req, res) => {
   }
 });
 
+// Rota para obter avaliações por período
+router.get('/evaluations', async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  if (!startDate || !endDate) {
+    return res.status(400).json({ message: 'Datas de início e fim são obrigatórias.' });
+  }
+
+  try {
+    const evaluations = await Evaluation.find({
+      date: {
+        $gte: new Date(startDate as string),
+        $lte: new Date(endDate as string)
+      }
+    });
+
+    res.status(200).json(evaluations);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao obter avaliações por período.', error });
+  }
+});
+
 export default router;
