@@ -3,6 +3,11 @@ import { Evaluation } from '../models/Evaluation';
 
 const router = Router();
 
+interface SuggestionStats {
+  total: number;
+  positive: number;
+}
+
 // Rota para cadastro de avaliações
 router.post('/evaluations', async (req, res) => {
   const { errorCode, suggestionText, date, clientCode, evaluation } = req.body;
@@ -32,16 +37,16 @@ router.get('/evaluations/average', async (req, res) => {
     const positiveEvaluations = evaluations.filter(e => e.evaluation === 'positive').length;
     const averageTotal = (positiveEvaluations / totalEvaluations) * 100;
 
-    const suggestions = evaluations.reduce((acc, curr) => {
-      if (!acc[curr.suggestionText]) {
-        acc[curr.suggestionText] = { total: 0, positive: 0 };
+    const suggestions: { [key: string]: SuggestionStats } = {};
+    evaluations.forEach(curr => {
+      if (!suggestions[curr.suggestionText]) {
+        suggestions[curr.suggestionText] = { total: 0, positive: 0 };
       }
-      acc[curr.suggestionText].total += 1;
+      suggestions[curr.suggestionText].total += 1;
       if (curr.evaluation === 'positive') {
-        acc[curr.suggestionText].positive += 1;
+        suggestions[curr.suggestionText].positive += 1;
       }
-      return acc;
-    }, {});
+    });
 
     const averageBySuggestion = Object.keys(suggestions).map(suggestion => ({
       suggestion,
