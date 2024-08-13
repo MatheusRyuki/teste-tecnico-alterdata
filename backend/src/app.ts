@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import cors from "cors";
 import suggestionRoutes from "./routes/suggestionRoutes";
 import evaluationRoutes from "./routes/evaluationRoutes";
 
@@ -8,6 +9,7 @@ const app = express();
 
 // Middleware
 app.use(bodyParser.json());
+app.use(cors());
 
 // Conectar ao MongoDB
 mongoose
