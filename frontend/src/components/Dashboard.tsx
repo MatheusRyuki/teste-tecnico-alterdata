@@ -22,6 +22,17 @@ const Dashboard: React.FC = () => {
     };
 
     fetchAverages();
+
+    const ws = new WebSocket('ws://localhost:3000');
+    ws.onmessage = (event) => {
+      const newEvaluation = JSON.parse(event.data);
+      console.log('Nova avaliação recebida:', newEvaluation);
+      fetchAverages(); // Atualizar as médias quando uma nova avaliação for recebida
+    };
+
+    return () => {
+      ws.close();
+    };
   }, []);
 
   return (

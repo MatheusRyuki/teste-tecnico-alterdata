@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { Evaluation } from '../models/Evaluation';
+import { wss } from '../server';
 
 const router = Router();
 
@@ -19,6 +20,14 @@ router.post('/evaluations', async (req, res) => {
   try {
     const newEvaluation = new Evaluation({ errorCode, suggestionText, date, clientCode, evaluation });
     await newEvaluation.save();
+
+    // Enviar atualização para todos os clientes conectados
+    wss.clients.forEach(client => {
+      if (client.readyState === 1) {
+        client.send(JSON.stringify(newEvaluation));
+      }
+    });
+
     res.status(201).json({ message: 'Avaliação cadastrada com sucesso!' });
   } catch (error) {
     res.status(500).json({ message: 'Erro ao cadastrar avaliação.', error });
