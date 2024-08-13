@@ -40,8 +40,15 @@ const Dashboard: React.FC = () => {
     const ws = new WebSocket("ws://localhost:3000");
     ws.onmessage = (event) => {
       const newEvaluation = JSON.parse(event.data);
-      console.log(newEvaluation);
-      enqueueSnackbar("Nova avaliação recebida!", { variant: "info" });
+      const message = `Nova avaliação recebida:
+        Código de Erro: ${newEvaluation.errorCode}
+        Sugestão: ${newEvaluation.suggestionText}
+        Data: ${new Date(newEvaluation.date).toLocaleDateString()}
+        Cliente: ${newEvaluation.clientCode}
+        Avaliação: ${
+          newEvaluation.evaluation === "positive" ? "Positiva" : "Negativa"
+        }`;
+      enqueueSnackbar(message, { variant: "info" });
       fetchAverages(); // Atualizar as médias quando uma nova avaliação for recebida
     };
 
