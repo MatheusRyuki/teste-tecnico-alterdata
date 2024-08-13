@@ -19,9 +19,46 @@ const EvaluationForm: React.FC = () => {
   const [clientCode, setClientCode] = useState("");
   const [evaluation, setEvaluation] = useState("");
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<{
+    errorCode?: string;
+    suggestionText?: string;
+    date?: string;
+    clientCode?: string;
+    evaluation?: string;
+  }>({});
+
+  const validate = () => {
+    const newErrors: {
+      errorCode?: string;
+      suggestionText?: string;
+      date?: string;
+      clientCode?: string;
+      evaluation?: string;
+    } = {};
+    if (!/^\d{6}$/.test(errorCode)) {
+      newErrors.errorCode = "Código de erro deve conter exatamente 6 dígitos.";
+    }
+    if (suggestionText.trim().length === 0) {
+      newErrors.suggestionText = "Sugestão de correção é obrigatória.";
+    }
+    if (!date) {
+      newErrors.date = "Data é obrigatória.";
+    }
+    if (!/^\d{6}$/.test(clientCode)) {
+      newErrors.clientCode =
+        "Código do cliente deve conter exatamente 6 dígitos.";
+    }
+    if (!evaluation) {
+      newErrors.evaluation = "Avaliação é obrigatória.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (!validate()) return;
+
     try {
       const response = await axios.post(
         "http://localhost:3000/api/evaluations",
@@ -60,6 +97,8 @@ const EvaluationForm: React.FC = () => {
             onChange={(e) => setErrorCode(e.target.value)}
             required
             inputProps={{ maxLength: 6 }}
+            error={!!errors.errorCode}
+            helperText={errors.errorCode}
           />
           <TextField
             label="Sugestão de Correção"
@@ -69,6 +108,8 @@ const EvaluationForm: React.FC = () => {
             value={suggestionText}
             onChange={(e) => setSuggestionText(e.target.value)}
             required
+            error={!!errors.suggestionText}
+            helperText={errors.suggestionText}
           />
           <TextField
             label="Data"
@@ -82,6 +123,8 @@ const EvaluationForm: React.FC = () => {
             InputLabelProps={{
               shrink: true,
             }}
+            error={!!errors.date}
+            helperText={errors.date}
           />
           <TextField
             label="Código do Cliente"
@@ -92,8 +135,10 @@ const EvaluationForm: React.FC = () => {
             onChange={(e) => setClientCode(e.target.value)}
             required
             inputProps={{ maxLength: 6 }}
+            error={!!errors.clientCode}
+            helperText={errors.clientCode}
           />
-          <FormControl fullWidth margin="normal">
+          <FormControl fullWidth margin="normal" error={!!errors.evaluation}>
             <InputLabel>Avaliação</InputLabel>
             <Select
               value={evaluation}
@@ -103,6 +148,11 @@ const EvaluationForm: React.FC = () => {
               <MenuItem value="positive">Positiva</MenuItem>
               <MenuItem value="negative">Negativa</MenuItem>
             </Select>
+            {errors.evaluation && (
+              <Typography variant="body2" color="error">
+                {errors.evaluation}
+              </Typography>
+            )}
           </FormControl>
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Cadastrar Avaliação

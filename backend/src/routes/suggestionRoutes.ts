@@ -7,10 +7,15 @@ const router = Router();
 router.post("/suggestions", async (req, res) => {
   const { errorCode, suggestionText } = req.body;
 
-  if (!errorCode || !suggestionText) {
-    return res.status(400).json({
-      message: "Código de erro e texto da sugestão são obrigatórios.",
-    });
+  if (!/^\d{6}$/.test(errorCode)) {
+    return res
+      .status(400)
+      .json({ message: "Código de erro deve conter exatamente 6 dígitos." });
+  }
+  if (!suggestionText || suggestionText.trim().length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Texto da sugestão é obrigatório." });
   }
 
   try {
@@ -29,11 +34,9 @@ router.get("/suggestions/:errorCode", async (req, res) => {
   try {
     const suggestions = await Suggestion.find({ errorCode });
     if (suggestions.length === 0) {
-      return res
-        .status(404)
-        .json({
-          message: "Nenhuma sugestão encontrada para este código de erro.",
-        });
+      return res.status(404).json({
+        message: "Nenhuma sugestão encontrada para este código de erro.",
+      });
     }
     res.status(200).json(suggestions);
   } catch (error) {

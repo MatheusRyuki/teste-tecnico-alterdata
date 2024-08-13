@@ -13,15 +13,27 @@ interface SuggestionStats {
 router.post('/evaluations', async (req, res) => {
   const { errorCode, suggestionText, date, clientCode, evaluation } = req.body;
 
-  if (!errorCode || !suggestionText || !date || !clientCode || !evaluation) {
-    return res.status(400).json({ message: 'Todos os campos são obrigatórios.' });
+  if (!/^\d{6}$/.test(errorCode)) {
+    return res.status(400).json({ message: 'Código de erro deve conter exatamente 6 dígitos.' });
+  }
+  if (!suggestionText || suggestionText.trim().length === 0) {
+    return res.status(400).json({ message: 'Sugestão de correção é obrigatória.' });
+  }
+  if (!date || isNaN(Date.parse(date))) {
+    return res.status(400).json({ message: 'Data inválida.' });
+  }
+  if (!/^\d{6}$/.test(clientCode)) {
+    return res.status(400).json({ message: 'Código do cliente deve conter exatamente 6 dígitos.' });
+  }
+  if (!['positive', 'negative'].includes(evaluation)) {
+    return res.status(400).json({ message: 'Avaliação deve ser "positive" ou "negative".' });
   }
 
   try {
     const newEvaluation = new Evaluation({ errorCode, suggestionText, date, clientCode, evaluation });
     await newEvaluation.save();
 
-    // Enviar atualização para todos os clientes conectados
+    // Enviar atualização para todos os clientes conectados via WebSocket
     wss.clients.forEach(client => {
       if (client.readyState === 1) {
         client.send(JSON.stringify(newEvaluation));

@@ -6,9 +6,27 @@ const SuggestionForm: React.FC = () => {
   const [errorCode, setErrorCode] = useState("");
   const [suggestionText, setSuggestionText] = useState("");
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<{
+    errorCode?: string;
+    suggestionText?: string;
+  }>({});
+
+  const validate = () => {
+    const newErrors: { errorCode?: string; suggestionText?: string } = {};
+    if (!/^\d{6}$/.test(errorCode)) {
+      newErrors.errorCode = "Código de erro deve conter exatamente 6 dígitos.";
+    }
+    if (suggestionText.trim().length === 0) {
+      newErrors.suggestionText = "Texto da sugestão é obrigatório.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (!validate()) return;
+
     try {
       const response = await axios.post(
         "http://localhost:3000/api/suggestions",
@@ -41,6 +59,8 @@ const SuggestionForm: React.FC = () => {
             onChange={(e) => setErrorCode(e.target.value)}
             required
             inputProps={{ maxLength: 6 }}
+            error={!!errors.errorCode}
+            helperText={errors.errorCode}
           />
           <TextField
             label="Texto da Sugestão"
@@ -52,6 +72,8 @@ const SuggestionForm: React.FC = () => {
             required
             multiline
             rows={4}
+            error={!!errors.suggestionText}
+            helperText={errors.suggestionText}
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Cadastrar Sugestão
